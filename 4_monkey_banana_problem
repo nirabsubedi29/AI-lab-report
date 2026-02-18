@@ -1,0 +1,39 @@
+class MonkeyBananas:
+    def __init__(self):
+        # Initial State: (MonkeyPos, MonkeyLevel, BoxPos, HasBanana)
+        self.initial_state = ('A', 'Floor', 'B', False)
+        self.target_pos = 'C' # Where the bananas are hanging
+
+    def solve(self, state):
+        m_pos, m_lvl, b_pos, has_b = state
+
+        # Goal State
+        if has_b:
+            print("Goal reached! Monkey has the bananas.")
+            return True
+
+        # Action 1: Move to the Box
+        if m_pos != b_pos and m_lvl == 'Floor':
+            print(f"Action: Monkey moves from {m_pos} to Box at {b_pos}")
+            return self.solve((b_pos, 'Floor', b_pos, has_b))
+
+        # Action 2: Push Box to Banana Position
+        if m_pos == b_pos and b_pos != self.target_pos and m_lvl == 'Floor':
+            print(f"Action: Monkey pushes box from {b_pos} to {self.target_pos}")
+            return self.solve((self.target_pos, 'Floor', self.target_pos, has_b))
+
+        # Action 3: Climb the Box
+        if m_pos == b_pos and b_pos == self.target_pos and m_lvl == 'Floor':
+            print("Action: Monkey climbs onto the box")
+            return self.solve((m_pos, 'OnBox', b_pos, has_b))
+
+        # Action 4: Grasp the Bananas
+        if m_lvl == 'OnBox' and m_pos == self.target_pos and not has_b:
+            print("Action: Monkey grasps the bananas!")
+            return self.solve((m_pos, 'OnBox', b_pos, True))
+
+        return False
+
+# Run the simulation
+problem = MonkeyBananas()
+problem.solve(problem.initial_state)
